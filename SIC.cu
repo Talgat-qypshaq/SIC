@@ -1,15 +1,5 @@
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-//#include "SIC_QPSK.c"
-//#include "SIC_QAM16.c"
-//#include "SIC_QAM64.c"
-//#include "SIC_Rayleigh.c"
 #include "SIC_header.cuh"
-using namespace std;
+#include "SIC_Generate.cpp"
 
 FILE *fp1, *fp2, *fp3;
 int lengthOfLineFunction(FILE *fp2, char *fileLocation, char *line, int lengthOfLine);
@@ -115,9 +105,9 @@ __global__ void SIC(float *powerCoefficients, double *Rayleigh, double *received
 	}
 }
 
-int main(void )
+int main(void)
 {
-	char fileLocation[256] = "/home/talgat/github/SIC/OPA/PowerAllocation";
+	char fileLocation[256] = "/home/talgat/github/SIC/OPA/";
 	int totalPower = 1;
 	int order = cellSize % numberOfUEs;
 	char a[8] = "10";
@@ -151,25 +141,26 @@ int main(void )
 		p = strtok(NULL, " ");
 	}
 	fclose(fp2);
-
+	srand((signed)time(NULL));
 		int *generatedSignal;
+		SIC_Generate generate;
 		switch (modulation)
 		{
 			case 4:
 			{
-				generatedSignal = getGeneratedQPSKSignal();
+				generatedSignal = generate.getGeneratedQPSKSignal();
 				//printf("4\n");
 				break;
 			}
 			case 16:
 			{
-				generatedSignal = getGeneratedQAM16Signal();
+				generatedSignal = generate.getGeneratedQAM16Signal();
 				//printf("16\n");
 				break;
 			}
 			case 64:
 			{
-				generatedSignal = getGeneratedQAM64Signal();
+				generatedSignal = generate.getGeneratedQAM64Signal();
 				//printf("64\n");
 				break;
 			}
@@ -226,7 +217,7 @@ int main(void )
 		cudaEventRecord(stop, 0);
 		cudaEventSynchronize(stop);
 		cudaEventElapsedTime(&elapsedTime, start, stop);
-		
+
 		char fileLocation_2[128] = "/home/talgat/github/SIC/results.txt";
 		fp3 = fopen(fileLocation_2, "w");
 		printf("Time to generate: %.3f ms", elapsedTime);

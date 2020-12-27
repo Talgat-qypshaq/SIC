@@ -1,14 +1,9 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "SIC_header.cuh"
-#include <time.h>
 double * getGeneratedRayleighChannel(float *powerCoefficientMatrix) {
 	static double rayleighChannel[cellSize * 2];
 	int real = 0;
 	int imag = 0;
 	int order = cellSize % numberOfUEs;
-	srand((unsigned)time(NULL));
 	for (int i = 0; i < cellSize; i++)
 	{
 		real = rand() % 19 + (-9);
