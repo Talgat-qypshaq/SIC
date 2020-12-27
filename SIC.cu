@@ -142,93 +142,93 @@ int main(void)
 	}
 	fclose(fp2);
 	srand((signed)time(NULL));
-		int *generatedSignal;
-		SIC_Generate generate;
-		switch (modulation)
+	int *generatedSignal;
+	SIC_Generate generate;
+	switch (modulation)
+	{
+		case 4:
 		{
-			case 4:
-			{
-				generatedSignal = generate.getGeneratedQPSKSignal();
-				//printf("4\n");
-				break;
-			}
-			case 16:
-			{
-				generatedSignal = generate.getGeneratedQAM16Signal();
-				//printf("16\n");
-				break;
-			}
-			case 64:
-			{
-				generatedSignal = generate.getGeneratedQAM64Signal();
-				//printf("64\n");
-				break;
-			}
+			generatedSignal = generate.getGeneratedQPSKSignal();
+			printf("4\n");
+			break;
 		}
-
-		double *rayleighChannel;
-		rayleighChannel = getGeneratedRayleighChannel(powerCoefficientMatrix);
-		float signalWithPowerCoefficient[cellSize * 2];
-
-		for (i = 0; i<cellSize; i++)
+		case 16:
 		{
-			signalWithPowerCoefficient[i] = generatedSignal[i] * sqrt(powerCoefficientMatrix[order] * totalPower);
-			signalWithPowerCoefficient[i + cellSize] = generatedSignal[i + cellSize] * sqrt(powerCoefficientMatrix[order] * totalPower);
+			generatedSignal = generate.getGeneratedQAM16Signal();
+			//printf("16\n");
+			break;
 		}
-
-		float superSignalReal = 0;
-		float superSignalImag = 0;
-
-		for (i = 0; i < cellSize; i++)
+		case 64:
 		{
-			superSignalReal = superSignalReal + signalWithPowerCoefficient[i];
-			superSignalImag = superSignalImag + signalWithPowerCoefficient[i + cellSize];
+			generatedSignal = generate.getGeneratedQAM64Signal();
+			printf("64\n");
+			break;
 		}
+	}
 
-		double receivedSignal[cellSize * 2];
-		for (i = 0; i < cellSize; i++)
-		{
-			//noise is considered as zero
-			receivedSignal[i] = superSignalReal*rayleighChannel[i];
-			receivedSignal[i + cellSize] = superSignalImag*rayleighChannel[i + cellSize];
-		}
+	double *rayleighChannel;
+	rayleighChannel = getGeneratedRayleighChannel(powerCoefficientMatrix);
+	float signalWithPowerCoefficient[cellSize * 2];
 
-		float  *dev_PowerCoefficientMatrix;
-		double  *dev_RayleighChannel;
-		double  *dev_ReceivedSignal;
+	for (i = 0; i<cellSize; i++)
+	{
+		signalWithPowerCoefficient[i] = generatedSignal[i] * sqrt(powerCoefficientMatrix[order] * totalPower);
+		signalWithPowerCoefficient[i + cellSize] = generatedSignal[i + cellSize] * sqrt(powerCoefficientMatrix[order] * totalPower);
+	}
 
-		cudaMalloc((void**)&dev_PowerCoefficientMatrix, numberOfUEs * sizeof(float));
-		cudaMemcpy(dev_PowerCoefficientMatrix, powerCoefficientMatrix, numberOfUEs * sizeof(float), cudaMemcpyHostToDevice);
+	float superSignalReal = 0;
+	float superSignalImag = 0;
 
-		cudaMalloc((void**)&dev_RayleighChannel, cellSize * 2 * sizeof(double));
-		cudaMemcpy(dev_RayleighChannel, rayleighChannel, cellSize * 2 * sizeof(double), cudaMemcpyHostToDevice);
+	for (i = 0; i < cellSize; i++)
+	{
+		superSignalReal = superSignalReal + signalWithPowerCoefficient[i];
+		superSignalImag = superSignalImag + signalWithPowerCoefficient[i + cellSize];
+	}
 
-		cudaMalloc((void**)&dev_ReceivedSignal, cellSize * 2 * sizeof(double));
-		cudaMemcpy(dev_ReceivedSignal, receivedSignal, cellSize * 2 * sizeof(double), cudaMemcpyHostToDevice);
+	double receivedSignal[cellSize * 2];
+	for (i = 0; i < cellSize; i++)
+	{
+		//noise is considered as zero
+		receivedSignal[i] = superSignalReal*rayleighChannel[i];
+		receivedSignal[i + cellSize] = superSignalImag*rayleighChannel[i + cellSize];
+	}
 
-		cudaEvent_t start, stop;
-		float elapsedTime;
-		cudaEventCreate(&start);
-		cudaEventCreate(&stop);
-		cudaEventRecord(start, 0);
-		//CALLING CUDA START  ****************************************************************************************
-		SIC << <cellCoefficient, groupSize >> > (dev_PowerCoefficientMatrix, dev_RayleighChannel, dev_ReceivedSignal);
-		//CALLING CUDA END    ****************************************************************************************
-		cudaEventRecord(stop, 0);
-		cudaEventSynchronize(stop);
-		cudaEventElapsedTime(&elapsedTime, start, stop);
+	float  *dev_PowerCoefficientMatrix;
+	double  *dev_RayleighChannel;
+	double  *dev_ReceivedSignal;
 
-		char fileLocation_2[128] = "/home/talgat/github/SIC/results.txt";
-		fp3 = fopen(fileLocation_2, "w");
-		printf("Time to generate: %.3f ms", elapsedTime);
-		fprintf(fp3, "%.3f", elapsedTime);
-		fclose(fp3);
-		printf("\n");
-		cudaMemcpy(&receivedSignal, dev_ReceivedSignal, cellSize * 2 * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMalloc((void**)&dev_PowerCoefficientMatrix, numberOfUEs * sizeof(float));
+	cudaMemcpy(dev_PowerCoefficientMatrix, powerCoefficientMatrix, numberOfUEs * sizeof(float), cudaMemcpyHostToDevice);
 
-		cudaFree(dev_PowerCoefficientMatrix);
-		cudaFree(dev_RayleighChannel);
-		cudaFree(dev_ReceivedSignal);
+	cudaMalloc((void**)&dev_RayleighChannel, cellSize * 2 * sizeof(double));
+	cudaMemcpy(dev_RayleighChannel, rayleighChannel, cellSize * 2 * sizeof(double), cudaMemcpyHostToDevice);
+
+	cudaMalloc((void**)&dev_ReceivedSignal, cellSize * 2 * sizeof(double));
+	cudaMemcpy(dev_ReceivedSignal, receivedSignal, cellSize * 2 * sizeof(double), cudaMemcpyHostToDevice);
+
+	cudaEvent_t start, stop;
+	float elapsedTime;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+	cudaEventRecord(start, 0);
+	//CALLING CUDA START  ****************************************************************************************
+	SIC << <cellCoefficient, groupSize >> > (dev_PowerCoefficientMatrix, dev_RayleighChannel, dev_ReceivedSignal);
+	//CALLING CUDA END    ****************************************************************************************
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+
+	char fileLocation_2[128] = "/home/talgat/github/SIC/results.txt";
+	fp3 = fopen(fileLocation_2, "w");
+	printf("Time to generate: %.3f ms", elapsedTime);
+	fprintf(fp3, "%.3f", elapsedTime);
+	fclose(fp3);
+	printf("\n");
+	cudaMemcpy(&receivedSignal, dev_ReceivedSignal, cellSize * 2 * sizeof(double), cudaMemcpyDeviceToHost);
+
+	cudaFree(dev_PowerCoefficientMatrix);
+	cudaFree(dev_RayleighChannel);
+	cudaFree(dev_ReceivedSignal);
 }
 int lengthOfLineFunction(FILE *fp, char *fileLocation, char *line, int lengthOfLine)
 {

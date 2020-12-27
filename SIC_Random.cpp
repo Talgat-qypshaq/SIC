@@ -9,6 +9,6 @@ class SIC_Random
     }
     float getRandomFloat()
     {
-      return 3.0 * uniform0to1Random() - 1.0;
+      return 2.0 * uniform0to1Random() - 1.0;
     }
 };

@@ -25,7 +25,7 @@ class SIC_Generate
     			imag = -1;
     		signal[i] = (int)real;
     		signal[i + cellSize] = (int)imag;
-    		//printf("A: %d %d \n", signal[i], signal[i + cellSize]);
+    		//printf("B: %d %d \n", signal[i], signal[i + cellSize]);
     	}
     	return signal;
     }
@@ -33,28 +33,20 @@ class SIC_Generate
     {
     	for (int i = 0; i < cellSize; i++)
     	{
-        real = r.getRandomFloat();
-        imag = r.getRandomFloat();
-    		//printf("A: %.2f %.2f \n", real, imag);
-    		if (real < 0.25)
-    			real = 1;
-    		if (real >= 0.25 && real < 0.5)
-    			real = -1;
-    		if (real >= 0.5 && real < 0.75)
-    			real = 3;
-    		if (real >= 0.75)
-    			real = -3;
-    		if (imag < 0.25)
-    			imag = 1;
-    		if (imag >= 0.25 && imag < 0.5)
-    			imag = -1;
-    		if (imag >= 0.5 && imag < 0.75)
-    			imag = 3;
-    		if (imag >= 0.75)
-    			imag = -3;
+        real = r.uniform0to1Random();
+        imag = r.uniform0to1Random();
+    		//printf("A: %.2f %.2f\n", real, imag);
+    		if (real < 0.25) real = 1.0;
+    		else if (real >= 0.25 && real < 0.5) real = -1.0;
+    		else if (real >= 0.5 && real < 0.75) real = 3.0;
+    		else if (real >= 0.75) real = -3.0;
+    		if (imag < 0.25) imag = 1.0;
+    		else if (imag >= 0.25 && imag < 0.5) imag = -1.0;
+    		else if (imag >= 0.5 && imag < 0.75)	imag = 3.0;
+    		else if (imag >= 0.75) imag = -3.0;
     		signal[i] = (int)real;
     		signal[i + cellSize] = (int)imag;
-    		//printf("B: %d %d \n", signal[i], signal[i + cellSize]);
+    		//printf("B: %d %d\n", signal[i], signal[i + cellSize]);
     	}
     	return signal;
     }
@@ -62,40 +54,40 @@ class SIC_Generate
     {
     	for (int i = 0; i < cellSize; i++)
       {
-        real = r.getRandomFloat();
-        imag = r.getRandomFloat();
+        real = r.uniform0to1Random();
+        imag = r.uniform0to1Random();
     		//printf("A: %.2f %.2f \n", real, imag);
     		if (real < 0.03125)
     			real = 7;
-    		if (real >= 0.03125 && real < 0.0625)
+    		else if (real >= 0.03125 && real < 0.0625)
     			real = 5;
-    		if (real >= 0.0625 && real < 0.75)
+    		else if (real >= 0.0625 && real < 0.75)
     			real = 3;
-    		if (real >= 0.75 && real < 0.09375)
+    		else if (real >= 0.75 && real < 0.09375)
     			real = 1;
-    		if (real >= 0.09375 && real < 0.125)
+    		else if (real >= 0.09375 && real < 0.125)
     			real = -1;
-    		if (real >= 0.125 && real < 0.15625)
+    		else if (real >= 0.125 && real < 0.15625)
     			real = -3;
-    		if (real >= 0.15625 && real < 0.1875)
+    		else if (real >= 0.15625 && real < 0.1875)
     			real = -5;
-    		if (real >= 0.1875)
+    		else if (real >= 0.1875)
     			real = -7;
     		if (imag < 0.03125)
     			imag = 7;
-    		if (imag >= 0.03125 && imag < 0.0625)
+    		else if (imag >= 0.03125 && imag < 0.0625)
     			imag = 5;
-    		if (imag >= 0.0625 && imag < 0.75)
+    		else if (imag >= 0.0625 && imag < 0.75)
     			imag = 3;
-    		if (imag >= 0.75 && imag < 0.09375)
+    		else if (imag >= 0.75 && imag < 0.09375)
     			imag = 1;
-    		if (imag >= 0.09375 && imag < 0.125)
+    		else if (imag >= 0.09375 && imag < 0.125)
     			imag = -1;
-    		if (imag >= 0.125 && imag < 0.15625)
+    		else if (imag >= 0.125 && imag < 0.15625)
     			imag = -3;
-    		if (imag >= 0.15625 && imag < 0.1875)
+    		else if (imag >= 0.15625 && imag < 0.1875)
     			imag = -5;
-    		if (imag >= 0.1875)
+    		else if (imag >= 0.1875)
     			imag = -7;
     		signal[i] = (int)real;
     		signal[i + cellSize] = (int)imag;
