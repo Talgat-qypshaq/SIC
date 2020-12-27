@@ -1,3 +1,9 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 //number of clusters is a group size
 //one thread is assigned per cluster
 #define numberOfUEs 10
@@ -7,8 +13,10 @@
 #define cellSize 1920
 // always check cell size:
 // cell size = numberOfUEs x groupSize x cell coefficient
-#define modulation 4
+#define modulation 16
 int * getGeneratedQPSKSignal(void);
 int * getGeneratedQAM16Signal(void);
 int * getGeneratedQAM64Signal(void);
+float getRandomFloat(void);
+float uniform0to1Random(void);
 double * getGeneratedRayleighChannel(float *powerCoefficientMatrix);
