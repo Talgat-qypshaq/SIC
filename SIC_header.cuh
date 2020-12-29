@@ -1,9 +1,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
 #include <time.h>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
+
 //number of clusters is a group size
 //one thread is assigned per cluster
 #define numberOfUEs 10
@@ -19,4 +21,6 @@ int * getGeneratedQAM16Signal(void);
 int * getGeneratedQAM64Signal(void);
 float getRandomFloat(void);
 float uniform0to1Random(void);
+float * getOPA(void);
 double * getGeneratedRayleighChannel(float *powerCoefficientMatrix);
+int lengthOfLineFunction(FILE *fp2, char *fileLocation, char *line, int lengthOfLine);
