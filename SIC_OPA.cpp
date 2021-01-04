@@ -16,17 +16,7 @@ class SIC_OPA
   	int lengthOfLine = 0;
   	lengthOfLine = lengthOfLineFunction(fp1, fileLocation, line, lengthOfLine);
   	//printf("\nlengthOfLine %d \n", lengthOfLine);
-  	//array for optimum power allocation coefficients
-    /*
-    if (powerCoefficientMatrix != 0)
-  	{
-  		powerCoefficientMatrix = (float*)realloc(powerCoefficientMatrix, numberOfUEs * sizeof(float));
-  	}
-  	else
-  	{
-  		powerCoefficientMatrix = (float*)malloc(numberOfUEs * sizeof(float));
-  	}
-    */
+  	//array for optimum power allocation coefficients    
   	//iterate through each value in a line
   	fp2 = fopen(fileLocation, "r");
   	fgets(line, lengthOfLine, (FILE*)fp2);
